@@ -19,4 +19,16 @@ class UserPolicy
     {
         return $user->check()->isAdmin();
     }
+
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param  \App\User  $user
+     * @param  \App\User  $model
+     * @return mixed
+     */
+    public function view(User $user, User $model)
+    {
+        return $user->check()->isAdmin() || $user->id === $model->id;
+    }
 }

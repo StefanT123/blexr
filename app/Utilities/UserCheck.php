@@ -3,6 +3,8 @@
 namespace App\Utilities;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 
 class UserCheck
 {
@@ -31,5 +33,16 @@ class UserCheck
     public function isAdmin()
     {
         return $this->user->user_role === 'admin';
+    }
+
+    /**
+     * Checks if the user owns the passed model.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @return bool
+     */
+    public function owns(Model $model)
+    {
+        return Auth::user()->is($model->owner);
     }
 }

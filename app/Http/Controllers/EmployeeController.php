@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Support\Str;
 use App\Http\Requests\UserRequest;
 use App\Mail\EmployeeLoginDetails;
@@ -34,5 +35,14 @@ class EmployeeController extends Controller
             'user' => new UserResource($employee),
             'message' => 'New employee has been created.',
         ], 201);
+    }
+
+    public function show(User $employee)
+    {
+        $this->authorize('view', $employee);
+
+        return response([
+            'user' => new UserResource($employee->load('licenses')),
+        ], 200);
     }
 }

@@ -30,7 +30,10 @@ Route::middleware('auth:api')->group(function () {
 
     Route::middleware('admin')->group(function () {
         Route::post('employee/create', 'EmployeeController@store')->name('employee.create');
-        Route::post('employee/{employee}/licenses', 'EmployeeLicenseController@store')->name('employee.licenses');
+        Route::post(
+            'employee/{employee}/licenses',
+            'EmployeeLicenseController@store'
+        )->name('employee.licenses');
         Route::post(
             'employee/{employee}/license/{license}/complete',
             'EmployeeLicenseController@complete'
@@ -38,4 +41,9 @@ Route::middleware('auth:api')->group(function () {
 
         Route::post('license', 'LicenseController@store')->name('license.create');
     });
+
+    Route::get(
+        'employee/{employee}',
+        'EmployeeController@show'
+    )->name('employee.show');
 });
