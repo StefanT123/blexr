@@ -64,6 +64,16 @@ class User extends Authenticatable
     }
 
     /**
+     * User can make one request to work from home.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function workFromHomeRequest()
+    {
+        return $this->hasMany(WorkFromHome::class);
+    }
+
+    /**
      * Get user's role.
      *
      * @return string
@@ -71,6 +81,19 @@ class User extends Authenticatable
     public function getUserRoleAttribute()
     {
         return $this->role->name;
+    }
+
+    /**
+     * Check if the user can make work from home request.
+     *
+     * Request can be made if it's been requested
+     * 4 hours before the end of the day.
+     *
+     * @return bool
+     */
+    public function canMakeWorkFromHomeRequest()
+    {
+        return now()->addHours(4) < now()->endOfDay();
     }
 
     /**

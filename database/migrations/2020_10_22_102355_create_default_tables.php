@@ -43,6 +43,15 @@ class CreateDefaultTables extends Migration
 
             $table->primary(['license_id', 'user_id']);
         });
+
+        Schema::create('work_from_home', function (Blueprint $table) {
+            $table->id();
+            $table->text('date');
+            $table->tinyInteger('hours')->unsigned();
+            $table->boolean('approved')->nullable();
+            $table->bigInteger('user_id')->unsigned();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -56,5 +65,6 @@ class CreateDefaultTables extends Migration
         Schema::dropIfExists('roles');
         Schema::dropIfExists('licenses');
         Schema::dropIfExists('licence_user');
+        Schema::dropIfExists('work_from_home');
     }
 }

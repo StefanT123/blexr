@@ -2,22 +2,18 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\License;
 use Laravel\Passport\Passport;
-use Illuminate\Foundation\Testing\WithFaker;
 
-class EmployeeTest extends TestCase
+class EmployeeTest extends EmployeeCase
 {
-    use WithFaker;
-
     /** @test */
     public function employee_cant_see_data_of_another_employee()
     {
         $employees = User::factory()->count(2)->create([
-            'role_id' => Role::factory()->create(['name' => 'user']),
+            'role_id' => Role::factory(),
         ]);
 
         $john = $employees[0];
@@ -36,9 +32,7 @@ class EmployeeTest extends TestCase
             'role_id' => Role::factory()->create(['name' => 'admin']),
         ]);
 
-        $employee = User::factory()->create([
-            'role_id' => Role::factory()->create(['name' => 'user']),
-        ]);
+        $employee = $this->createEmployee();
 
         Passport::actingAs($admin);
 
@@ -47,11 +41,9 @@ class EmployeeTest extends TestCase
     }
 
     /** @test */
-    public function logged_employee_can_see_his_data()
+    public function employee_can_see_his_data()
     {
-        $employee = User::factory()->create([
-            'role_id' => Role::factory()->create(['name' => 'user']),
-        ]);
+        $employee = $this->createEmployee();
 
         Passport::actingAs($employee);
 
@@ -65,7 +57,7 @@ class EmployeeTest extends TestCase
     }
 
     /** @test */
-    public function logged_employee_can_see_his_licenses()
+    public function employee_can_see_his_licenses()
     {
         $employee = User::factory()
             ->hasAttached(

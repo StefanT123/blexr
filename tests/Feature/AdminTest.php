@@ -19,12 +19,11 @@ class AdminTest extends TestCase
     /** @test */
     public function admin_can_add_new_employee()
     {
-        [$resp, $employee] = $this->createEmployee([
+        $employee = $this->createEmployee([
             'password' => 'secret',
             'password_confirmation' => 'secret',
         ]);
 
-        $resp->assertSuccessful();
         $this->assertDatabaseHas('users', ['email' => $employee['email']]);
     }
 
@@ -33,12 +32,10 @@ class AdminTest extends TestCase
     {
         Mail::fake();
 
-        [$resp, $employee] = $this->createEmployee([
+        $employee = $this->createEmployee([
             'password' => 'secret',
             'password_confirmation' => 'secret',
         ]);
-
-        $resp->assertSuccessful();
 
         Mail::assertSent(function (EmployeeLoginDetails $mail) use ($employee) {
             return $mail->employee->name === $employee['name'];
@@ -48,23 +45,21 @@ class AdminTest extends TestCase
     /** @test */
     public function when_new_employee_is_added_password_is_automatically_generated()
     {
-        [$resp, $employee] = $this->createEmployee([
+        $employee = $this->createEmployee([
             'password' => 'secret',
             'password_confirmation' => 'secret',
         ]);
 
         $createdEmployee = User::where('email', $employee['email'])->first();
 
-        $resp->assertSuccessful();
         $this->assertFalse(Hash::check('secret', $createdEmployee));
     }
 
     /** @test */
     public function admin_can_create_employee_without_providing_password()
     {
-        [$resp, $employee] = $this->createEmployee();
+        $employee = $this->createEmployee();
 
-        $resp->assertSuccessful();
         $this->assertDatabaseHas('users', ['email' => $employee['email']]);
     }
 
@@ -123,6 +118,11 @@ class AdminTest extends TestCase
         $this->assertTrue((bool) $completedLicense->pivot->completed);
     }
 
+    /** @test */
+    public function admin_can_approve_work_from_home_request()
+    {
+    }
+
     protected function createEmployee(array $fields = [])
     {
         $admin = User::factory()->create([
@@ -141,6 +141,8 @@ class AdminTest extends TestCase
             array_merge($employee, $fields)
         );
 
-        return [$resp, $employee];
+        $resp->assertSuccessful();
+
+        return $employee;
     }
 }

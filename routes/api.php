@@ -46,4 +46,9 @@ Route::middleware('auth:api')->group(function () {
         'employee/{employee}',
         'EmployeeController@show'
     )->name('employee.show');
+
+    Route::post(
+        'employee/work-from-home',
+        'WorkFromHomeController@store'
+    )->name('employee.workFromHome');
 });

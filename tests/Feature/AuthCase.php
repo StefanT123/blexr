@@ -19,7 +19,7 @@ class AuthCase extends TestCase
         config(['services.passport.password_client_secret' => $passwordClientSecret]);
     }
 
-    public function createUser(array $params = [])
+    protected function createUser(array $params = [])
     {
         return User::factory()->create($params);
     }

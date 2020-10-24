@@ -34,6 +34,14 @@ class CreateForeignKeys extends Migration
                 ->onDelete('no action')
                 ->onUpdate('no action');
         });
+
+        Schema::table('work_from_home', function (Blueprint $table) {
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('no action')
+                ->onUpdate('no action');
+        });
     }
 
     /**
