@@ -6,6 +6,8 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\WorkFromHome;
 use Laravel\Passport\Passport;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\WorkFromHomeRequestStatusChanged;
 
 class WorkFromHomeTest extends EmployeeCase
 {
@@ -50,13 +52,13 @@ class WorkFromHomeTest extends EmployeeCase
         $employee = User::factory()
             ->has(
                 WorkFromHome::factory()->count(3),
-                'workFromHomeRequest'
+                'workFromHomeRequests'
             )
             ->create([
                 'role_id' => Role::factory()->create(['name' => 'user']),
             ]);
 
-        $this->assertCount(3, $employee->workFromHomeRequest);
+        $this->assertCount(3, $employee->workFromHomeRequests);
     }
 
     /** @test */
@@ -73,7 +75,7 @@ class WorkFromHomeTest extends EmployeeCase
             'hours' => 5,
         ]);
 
-        $workFromHomeRequestApproved = $employee->workFromHomeRequest->first()->approved;
+        $workFromHomeRequestApproved = $employee->workFromHomeRequests->first()->approved;
         $this->assertEquals(null, $workFromHomeRequestApproved);
     }
 
@@ -95,5 +97,80 @@ class WorkFromHomeTest extends EmployeeCase
         ]);
 
         $resp->assertForbidden();
+    }
+
+    /** @test */
+    public function when_work_from_home_request_is_approved_employee_is_notified()
+    {
+        Notification::fake();
+
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $employee = User::factory()
+            ->has(
+                WorkFromHome::factory()->count(3),
+                'workFromHomeRequests',
+            )
+            ->create([
+                'role_id' => Role::factory()->create(['name' => 'user']),
+            ]);
+
+        $randomWorkFromHomeRequest  = $employee->workFromHomeRequests->random();
+
+        $resp = $this->json(
+            'post',
+            route(
+                'workFromHome.approve',
+                $randomWorkFromHomeRequest
+            )
+        );
+
+        Notification::assertSentTo(
+            $employee,
+            function (WorkFromHomeRequestStatusChanged $notification) use ($randomWorkFromHomeRequest) {
+                return $notification->request->approved;
+            }
+        );
+    }
+
+    /** @test */
+    public function when_work_from_home_request_is_denied_employee_is_notified()
+    {
+        Notification::fake();
+
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $employee = User::factory()
+            ->hasWorkFromHomeRequests(3, [
+                'approved' => true,
+            ])
+            ->create([
+                'role_id' => Role::factory()->create(['name' => 'user']),
+            ]);
+
+        $randomWorkFromHomeRequest  = $employee->workFromHomeRequests->random();
+
+        $resp = $this->json(
+            'post',
+            route(
+                'workFromHome.deny',
+                $randomWorkFromHomeRequest
+            )
+        );
+
+        Notification::assertSentTo(
+            $employee,
+            function (WorkFromHomeRequestStatusChanged $notification) use ($randomWorkFromHomeRequest) {
+                return ! $notification->request->approved;
+            }
+        );
     }
 }

@@ -8,6 +8,12 @@ use App\Http\Resources\LicenseResource;
 
 class LicenseController
 {
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\LicenseRequest  $request
+     * @return \Illuminate\Http\Response
+     */
     public function store(LicenseRequest $request)
     {
         $data = $request->validated();

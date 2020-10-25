@@ -15,6 +15,12 @@ class EmployeeController extends Controller
 {
     use AuthorizesRequests;
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\UserRequest  $request
+     * @return \Illuminate\Http\Response
+     */
     public function store(UserRequest $request)
     {
         $this->authorize('create', User::class);
@@ -37,6 +43,12 @@ class EmployeeController extends Controller
         ], 201);
     }
 
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\User  $employee
+     * @return \App\Http\Resources\PropertyResource
+     */
     public function show(User $employee)
     {
         $this->authorize('view', $employee);

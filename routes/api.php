@@ -40,6 +40,26 @@ Route::middleware('auth:api')->group(function () {
         )->name('employee.license.complete');
 
         Route::post('license', 'LicenseController@store')->name('license.create');
+
+        Route::post(
+            'work-from-home/{workFromHomeRequest}/approve',
+            'WorkFromHomeController@approve'
+        )->name('workFromHome.approve');
+
+        Route::post(
+            'work-from-home/{workFromHomeRequest}/deny',
+            'WorkFromHomeController@deny'
+        )->name('workFromHome.deny');
+
+        Route::get(
+            'work-from-home',
+            'WorkFromHomeController@index'
+        )->name('workFromHome.index');
+
+        Route::get(
+            'employee/{employee}/work-from-home',
+            'WorkFromHomeController@show'
+        )->name('workFromHome.show');
     });
 
     Route::get(

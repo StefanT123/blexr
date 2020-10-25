@@ -21,7 +21,7 @@ class WorkFromHome extends Model
      *
      * @var array
      */
-    protected $fillable = ['date', 'hours'];
+    protected $fillable = ['date', 'hours', 'approved'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -38,4 +38,14 @@ class WorkFromHome extends Model
      * @var string
      */
     protected $dateFormat = 'd-m-Y';
+
+    /**
+     * Work from home request is for one employee.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\belongsTo
+     */
+    public function employee()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

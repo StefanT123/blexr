@@ -9,6 +9,13 @@ use App\Http\Requests\EmployeeLicenseRequest;
 
 class EmployeeLicenseController
 {
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\UserRequest  $request
+     * @param  \App\Models\User                $employee
+     * @return \Illuminate\Http\Response
+     */
     public function store(EmployeeLicenseRequest $request, User $employee)
     {
         $data = $request->validated();
@@ -22,6 +29,13 @@ class EmployeeLicenseController
         ], 201);
     }
 
+    /**
+     * Complete a license for an employee.
+     *
+     * @param  \App\Models\User     $employee
+     * @param  \App\Models\License  $license
+     * @return \Illuminate\Http\Response
+     */
     public function complete(User $employee, License $license)
     {
         $employee->licenses()

@@ -64,11 +64,11 @@ class User extends Authenticatable
     }
 
     /**
-     * User can make one request to work from home.
+     * User can make many requests to work from home.
      *
      * @return \Illuminate\Database\Eloquent\Relations\hasMany
      */
-    public function workFromHomeRequest()
+    public function workFromHomeRequests()
     {
         return $this->hasMany(WorkFromHome::class);
     }

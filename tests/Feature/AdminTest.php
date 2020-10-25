@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\License;
+use App\Models\WorkFromHome;
 use Laravel\Passport\Passport;
 use App\Mail\EmployeeLoginDetails;
 use Illuminate\Support\Facades\Hash;
@@ -119,8 +120,124 @@ class AdminTest extends TestCase
     }
 
     /** @test */
+    public function admin_can_see_every_work_from_home_request()
+    {
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $employees = User::factory()
+            ->count(5)
+            ->has(
+                WorkFromHome::factory()->count(3),
+                'workFromHomeRequests',
+            )
+            ->create([
+                'role_id' => Role::factory()->create(['name' => 'user']),
+            ]);
+
+        $resp = $this->json('get', route('workFromHome.index'));
+
+        $resp->assertOk();
+        $resp->assertJsonFragment([
+            'date' => WorkFromHome::inRandomOrder()->first()->date,
+        ]);
+        $this->assertCount(15, $resp->json()['requests']);
+    }
+
+    /** @test */
+    public function admin_can_filter_work_from_home_requests_by_user()
+    {
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $employees = User::factory()
+            ->count(5)
+            ->has(
+                WorkFromHome::factory()
+                    ->count($randNumber = $this->faker->numberBetween(1, 10)),
+                'workFromHomeRequests',
+            )
+            ->create([
+                'role_id' => Role::factory()->create(['name' => 'user']),
+            ]);
+
+        $randomEmployee = $employees->random();
+
+        $resp = $this->json('get', route('workFromHome.show', $randomEmployee));
+
+        $resp->assertOk();
+        $this->assertCount($randNumber, $resp->json()['requests']);
+    }
+
+    /** @test */
     public function admin_can_approve_work_from_home_request()
     {
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $employee = User::factory()
+            ->has(
+                WorkFromHome::factory()->count(3),
+                'workFromHomeRequests',
+            )
+            ->create([
+                'role_id' => Role::factory()->create(['name' => 'user']),
+            ]);
+
+        $randomWorkFromHomeRequest  = $employee->workFromHomeRequests->first();
+        $this->assertFalse((bool) $randomWorkFromHomeRequest->approved);
+
+        $resp = $this->json(
+            'post',
+            route(
+                'workFromHome.approve',
+                $randomWorkFromHomeRequest
+            )
+        );
+
+        $resp->assertOk();
+        $this->assertTrue((bool) $randomWorkFromHomeRequest->fresh()->approved);
+    }
+
+    /** @test */
+    public function admin_can_deny_work_from_home_request()
+    {
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $employee = User::factory()
+            ->hasWorkFromHomeRequests(3, [
+                'approved' => true,
+            ])
+            ->create([
+                'role_id' => Role::factory()->create(['name' => 'user']),
+            ]);
+
+        $randomWorkFromHomeRequest  = $employee->workFromHomeRequests->random();
+        $this->assertTrue((bool) $randomWorkFromHomeRequest->approved);
+
+        $resp = $this->json(
+            'post',
+            route(
+                'workFromHome.deny',
+                $randomWorkFromHomeRequest
+            )
+        );
+
+        $resp->assertOk();
+        $this->assertFalse((bool) $randomWorkFromHomeRequest->fresh()->approved);
     }
 
     protected function createEmployee(array $fields = [])
