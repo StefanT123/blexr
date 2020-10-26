@@ -54,7 +54,7 @@ class EmployeeController extends Controller
             );
 
         return response([
-            'user' => new UserResource($employee),
+            'employee' => new UserResource($employee),
             'message' => 'New employee has been created.',
         ], 201);
     }

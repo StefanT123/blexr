@@ -25,7 +25,7 @@ Route::middleware('auth:api')->group(function () {
 
     Route::middleware('admin')->group(function () {
         Route::get('employees', 'EmployeeController@index')->name('employee.index');
-        Route::post('employee/create', 'EmployeeController@store')->name('employee.create');
+        Route::post('employee', 'EmployeeController@store')->name('employee.create');
         Route::post(
             'employee/{employee}/licenses',
             'EmployeeLicenseController@store'
@@ -35,6 +35,7 @@ Route::middleware('auth:api')->group(function () {
             'EmployeeLicenseController@complete'
         )->name('employee.license.complete');
 
+        Route::get('licenses', 'LicenseController@index')->name('license.index');
         Route::post('license', 'LicenseController@store')->name('license.create');
 
         Route::post(
@@ -59,9 +60,15 @@ Route::middleware('auth:api')->group(function () {
     });
 
     Route::get(
+        'employee/licenses',
+        'LicenseController@show'
+    )->name('license.show');
+
+    Route::get(
         'employee/{employee}',
         'EmployeeController@show'
     )->name('employee.show');
+
 
     Route::post(
         'employee/work-from-home',

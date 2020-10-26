@@ -70,7 +70,8 @@ class EmployeeTest extends EmployeeCase
 
         Passport::actingAs($employee);
 
-        $resp = $this->get(route('employee.show', $employee));
+        $resp = $this->get(route('license.show'));
+
         $resp->assertOk();
 
         $randomLicenseName = $employee->licenses()

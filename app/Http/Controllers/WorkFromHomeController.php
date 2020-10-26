@@ -20,7 +20,7 @@ class WorkFromHomeController
     public function index()
     {
         return response([
-            'requests' => WorkFromHome::all(),
+            'requests' => WorkFromHome::with('employee')->get(),
         ], 200);
     }
 
@@ -52,7 +52,7 @@ class WorkFromHomeController
     /**
      * Display the specified resource.
      *
-     * @param  \App\User  $employee
+     * @param  \App\Models\User  $employee
      * @return \Illuminate\Http\Response
      */
     public function show(User $employee)

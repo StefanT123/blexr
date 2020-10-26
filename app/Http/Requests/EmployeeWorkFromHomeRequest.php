@@ -14,7 +14,7 @@ class WorkFromHomeRequest extends FormRequest
     public function rules()
     {
         return [
-            'date' => 'required|date_format:d-m-Y',
+            'date' => 'required|date',
             'hours' => 'required|integer',
         ];
     }

@@ -47,10 +47,12 @@ class WorkFromHomeRequestStatusChanged extends Notification
      */
     public function toMail($notifiable)
     {
+        $status = $this->request->approved ? 'Approved' : 'Denied';
         return (new MailMessage)
             ->line('Status of your work from home request has been changed')
             ->line('For date: ' . $this->request->date)
-            ->line('Status: ' . (bool) $this->request->approved)
+            ->line('Number of hours: ' . $this->request->hours)
+            ->line('Status: ' . $status)
             ->line('Thank you for using our application!');
     }
 }

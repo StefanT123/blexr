@@ -33,11 +33,15 @@ class WorkFromHome extends Model
     ];
 
     /**
-     * The storage format of the model's date columns.
+     * Get work from home request date.
      *
-     * @var string
+     * @param  string  $value
+     * @return string
      */
-    protected $dateFormat = 'd-m-Y';
+    public function getDateAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('d-m-Y');
+    }
 
     /**
      * Work from home request is for one employee.

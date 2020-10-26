@@ -84,6 +84,25 @@ class AdminTest extends TestCase
     }
 
     /** @test */
+    public function admin_can_see_all_licenses()
+    {
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $licenses = License::factory()
+            ->count(5)
+            ->create();
+
+        $resp = $this->json('get', route('license.index'));
+
+        $resp->assertOk();
+        $this->assertCount(5, $resp->json()['licenses']);
+    }
+
+    /** @test */
     public function admin_can_grant_licenses_to_employee()
     {
         $admin = User::factory()->create([

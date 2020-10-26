@@ -39,11 +39,11 @@ class WorkFromHomeTest extends EmployeeCase
         $this->assertDatabaseHas(
             'work_from_home',
             [
-                'date' => $date,
                 'hours' => 5,
                 'user_id' => $employee->id,
             ],
         );
+        $this->assertEquals(WorkFromHome::first()->date, $date);
     }
 
     /** @test */
