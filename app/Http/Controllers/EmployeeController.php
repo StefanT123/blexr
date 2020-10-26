@@ -20,7 +20,10 @@ class EmployeeController extends Controller
         $this->authorize('viewAny', User::class);
 
         $employees = User::with('licenses')
-            ->whereHas('role', fn ($q) => $q->where('name', '!=', 'admin'))
+            ->whereHas(
+                'role',
+                fn ($q) => $q->where('name', '!=', 'admin')
+            )
             ->get();
 
         return response([
