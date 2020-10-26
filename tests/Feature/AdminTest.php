@@ -18,6 +18,25 @@ class AdminTest extends TestCase
     use WithFaker;
 
     /** @test */
+    public function admin_can_see_all_employees()
+    {
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        $employees = User::factory()->count(5)->create([
+            'role_id' => Role::factory()->create(['name' => 'user']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $resp = $this->json('get', route('employee.index'));
+
+        $resp->assertOk();
+        $this->assertCount(5, $resp->json()['employees']);
+    }
+
+    /** @test */
     public function admin_can_add_new_employee()
     {
         $employee = $this->createEmployee([

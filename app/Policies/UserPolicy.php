@@ -10,6 +10,17 @@ class UserPolicy
     use HandlesAuthorization;
 
     /**
+     * Determine whether the user can view any model.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function viewAny(User $user)
+    {
+        return $user->check()->isAdmin();
+    }
+
+    /**
      * Determine whether the user can create models.
      *
      * @param  \App\User  $user

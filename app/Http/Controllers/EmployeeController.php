@@ -15,6 +15,19 @@ class EmployeeController extends Controller
 {
     use AuthorizesRequests;
 
+    public function index()
+    {
+        $this->authorize('viewAny', User::class);
+
+        $employees = User::with('licenses')
+            ->whereHas('role', fn ($q) => $q->where('name', '!=', 'admin'))
+            ->get();
+
+        return response([
+            'employees' => UserResource::collection($employees),
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

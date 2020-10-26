@@ -24,6 +24,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('validate-token', 'AuthController@validateToken')->name('validateToken');
 
     Route::middleware('admin')->group(function () {
+        Route::get('employees', 'EmployeeController@index')->name('employee.index');
         Route::post('employee/create', 'EmployeeController@store')->name('employee.create');
         Route::post(
             'employee/{employee}/licenses',
