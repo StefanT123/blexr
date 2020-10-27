@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\WorkFromHome;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\WorkFromHomeRequest;
 use App\Notifications\WorkFromHomeRequestStatusChanged;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -19,8 +20,13 @@ class WorkFromHomeController
      */
     public function index()
     {
+        $user = Auth::user();
+        $workFromHomeRequests = $user->check()->isAdmin() ?
+            WorkFromHome::with('employee')->get() :
+            $user->workFromHomeRequests;
+
         return response([
-            'requests' => WorkFromHome::with('employee')->get(),
+            'requests' => $workFromHomeRequests,
         ], 200);
     }
 

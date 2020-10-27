@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\License;
+use App\Models\WorkFromHome;
 use Laravel\Passport\Passport;
 
 class EmployeeTest extends EmployeeCase
@@ -80,6 +81,34 @@ class EmployeeTest extends EmployeeCase
 
         $resp->assertJsonFragment([
             'name' => $randomLicenseName,
+        ]);
+    }
+
+    /** @test */
+    public function employee_can_see_his_work_from_home_requests()
+    {
+        $employee = User::factory()
+            ->has(
+                WorkFromHome::factory()->count(3),
+                'workFromHomeRequests'
+            )
+            ->create([
+                'role_id' => Role::factory()->create(['name' => 'user']),
+            ]);
+
+        Passport::actingAs($employee);
+
+        $resp = $this->json('get', route('workFromHome.index'));
+
+        $resp->assertOk();
+
+        $randomRequestDate = $employee->workFromHomeRequests()
+            ->inRandomOrder()
+            ->first()
+            ->date;
+
+        $resp->assertJsonFragment([
+            'date' => $randomRequestDate,
         ]);
     }
 }

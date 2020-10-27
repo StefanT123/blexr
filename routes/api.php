@@ -44,15 +44,15 @@ Route::middleware('auth:api')->group(function () {
         )->name('workFromHome.deny');
 
         Route::get(
-            'work-from-home',
-            'WorkFromHomeController@index'
-        )->name('workFromHome.index');
-
-        Route::get(
             'employee/{employee}/work-from-home',
             'WorkFromHomeController@show'
         )->name('workFromHome.show');
     });
+
+    Route::get(
+        'work-from-home',
+        'WorkFromHomeController@index'
+    )->name('workFromHome.index');
 
     Route::get(
         'employee/licenses',
