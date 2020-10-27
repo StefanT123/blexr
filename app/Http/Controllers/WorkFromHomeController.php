@@ -33,14 +33,13 @@ class WorkFromHomeController
     public function store(WorkFromHomeRequest $request)
     {
         $employee = $request->user();
+        $data = $request->validated();
 
         abort_unless(
-            $employee->canMakeWorkFromHomeRequest(),
+            $employee->canMakeWorkFromHomeRequest($data['date']),
             403,
             'It\'s too late to make a request now'
         );
-
-        $data = $request->validated();
 
         $employee->workFromHomeRequests()->create($data);
 

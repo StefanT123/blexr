@@ -22,6 +22,30 @@ class WorkFromHomeTest extends EmployeeCase
     }
 
     /** @test */
+    public function employee_cant_request_to_work_from_home_if_the_date_is_in_past()
+    {
+        $employee = $this->createEmployee();
+
+        Passport::actingAs($employee);
+
+        $date = $this->faker->dateTimeBetween('-2 months', 'now')->format('d-m-Y');
+
+        $resp = $this->json('post', route('employee.workFromHome'), [
+            'date' => $date,
+            'hours' => 5,
+        ]);
+
+        $resp->assertForbidden();
+        $this->assertDatabaseMissing(
+            'work_from_home',
+            [
+                'hours' => 5,
+                'user_id' => $employee->id,
+            ],
+        );
+    }
+
+    /** @test */
     public function employee_can_request_to_work_from_home_on_specific_date()
     {
         $employee = $this->createEmployee();

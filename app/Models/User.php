@@ -79,11 +79,14 @@ class User extends Authenticatable
      * Request can be made if it's been requested
      * 4 hours before the end of the day.
      *
+     * @param  string $date
      * @return bool
      */
-    public function canMakeWorkFromHomeRequest()
+    public function canMakeWorkFromHomeRequest(string $date)
     {
-        return now()->addHours(4) < now()->endOfDay();
+        $date = \Carbon\Carbon::parse($date);
+
+        return $date->gt(now()) && now()->addHours(4) < now()->endOfDay();
     }
 
     /**
