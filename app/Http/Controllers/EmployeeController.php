@@ -11,7 +11,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-class EmployeeController extends Controller
+class EmployeeController
 {
     use AuthorizesRequests;
 

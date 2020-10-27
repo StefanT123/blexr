@@ -38,7 +38,6 @@ class CreateDefaultTables extends Migration
         Schema::create('license_user', function (Blueprint $table) {
             $table->bigInteger('license_id')->unsigned();
             $table->bigInteger('user_id')->unsigned();
-            $table->boolean('completed')->default(false);
 
             $table->primary(['license_id', 'user_id']);
         });

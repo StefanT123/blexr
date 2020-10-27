@@ -121,40 +121,13 @@ class AdminTest extends TestCase
             ->pluck('id')
             ->toArray();
 
-        $resp = $this->post(route('employee.licenses', $employee), ['ids' => $licenses]);
+        $resp = $this->post(
+            route('employee.licenses', $employee),
+            ['ids' => $licenses]
+        );
 
         $resp->assertSuccessful();
         $this->assertCount(5, $employee->licenses);
-    }
-
-    /** @test */
-    public function admin_can_set_license_as_completed_for_the_employee()
-    {
-        $admin = User::factory()->create([
-            'role_id' => Role::factory()->create(['name' => 'admin']),
-        ]);
-
-        $employee = User::factory()
-            ->hasAttached(
-                License::factory()->count(3),
-                ['completed' => false],
-            )
-            ->create([
-                'role_id' => Role::factory()->create(['name' => 'user']),
-            ]);
-
-        Passport::actingAs($admin);
-
-        $randomLicense = $employee->licenses()->inRandomOrder()->first();
-
-        $resp = $this->post(route('employee.license.complete', [$employee, $randomLicense]));
-
-        $resp->assertOk();
-        $completedLicense = $employee->licenses()
-            ->where('id', $randomLicense->id)
-            ->first();
-
-        $this->assertTrue((bool) $completedLicense->pivot->completed);
     }
 
     /** @test */
@@ -291,7 +264,8 @@ class AdminTest extends TestCase
             'email' => $this->faker->unique()->safeEmail,
         ];
 
-        $resp = $this->post(
+        $resp = $this->json(
+            'post',
             route('employee.create'),
             array_merge($employee, $fields)
         );

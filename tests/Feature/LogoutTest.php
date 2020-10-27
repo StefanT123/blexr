@@ -9,7 +9,7 @@ class LogoutTest extends AuthCase
     /** @test */
     public function exception_is_thrown_if_not_logged_user_tries_to_call_logout()
     {
-        $resp = $this->post(route('logout'));
+        $resp = $this->json('post', route('logout'));
 
         $resp->assertUnauthorized();
     }

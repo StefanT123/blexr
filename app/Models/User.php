@@ -50,8 +50,7 @@ class User extends Authenticatable
      */
     public function licenses()
     {
-        return $this->belongsToMany(License::class)
-            ->withPivot('completed');
+        return $this->belongsToMany(License::class);
     }
 
     /**

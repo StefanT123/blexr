@@ -21,7 +21,7 @@ class EmployeeTest extends EmployeeCase
 
         Passport::actingAs($john);
 
-        $resp = $this->get(route('employee.show', $jane));
+        $resp = $this->json('get', route('employee.show', $jane));
         $resp->assertForbidden();
     }
 
@@ -36,7 +36,7 @@ class EmployeeTest extends EmployeeCase
 
         Passport::actingAs($admin);
 
-        $resp = $this->get(route('employee.show', $employee));
+        $resp = $this->json('get', route('employee.show', $employee));
         $resp->assertOk();
     }
 
@@ -47,7 +47,7 @@ class EmployeeTest extends EmployeeCase
 
         Passport::actingAs($employee);
 
-        $resp = $this->get(route('employee.show', $employee));
+        $resp = $this->json('get', route('employee.show', $employee));
         $resp->assertOk();
 
         $resp->assertJsonFragment([
@@ -61,8 +61,7 @@ class EmployeeTest extends EmployeeCase
     {
         $employee = User::factory()
             ->hasAttached(
-                License::factory()->count(3),
-                ['completed' => $this->faker->boolean],
+                License::factory()->count(3)
             )
             ->create([
                 'role_id' => Role::factory()->create(['name' => 'user']),
@@ -70,7 +69,7 @@ class EmployeeTest extends EmployeeCase
 
         Passport::actingAs($employee);
 
-        $resp = $this->get(route('license.show'));
+        $resp = $this->json('get', route('license.show'));
 
         $resp->assertOk();
 

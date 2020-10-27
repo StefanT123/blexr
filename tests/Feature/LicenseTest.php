@@ -18,7 +18,7 @@ class LicenseTest extends TestCase
 
         Passport::actingAs($admin);
 
-        $resp = $this->post(route('license.create'), [
+        $resp = $this->json('post', route('license.create'), [
             'name' => 'New License',
         ]);
 

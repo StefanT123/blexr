@@ -12,7 +12,7 @@ class WorkFromHomePolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\User          $user
      * @param  \App\Models\WorkFromHome  $workFromHome
      * @return mixed
      */

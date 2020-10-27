@@ -18,9 +18,8 @@ Route::middleware('guest')->group(function () {
     Route::post('refresh-token', 'AuthController@refreshToken')->name('refreshToken');
 });
 
-Route::post('logout', 'AuthController@logout')->name('logout');
-
 Route::middleware('auth:api')->group(function () {
+    Route::post('logout', 'AuthController@logout')->name('logout');
     Route::get('validate-token', 'AuthController@validateToken')->name('validateToken');
 
     Route::middleware('admin')->group(function () {
@@ -30,10 +29,6 @@ Route::middleware('auth:api')->group(function () {
             'employee/{employee}/licenses',
             'EmployeeLicenseController@store'
         )->name('employee.licenses');
-        Route::post(
-            'employee/{employee}/license/{license}/complete',
-            'EmployeeLicenseController@complete'
-        )->name('employee.license.complete');
 
         Route::get('licenses', 'LicenseController@index')->name('license.index');
         Route::post('license', 'LicenseController@store')->name('license.create');
