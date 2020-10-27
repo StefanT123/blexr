@@ -22,7 +22,7 @@ class WorkFromHomeController
     {
         $user = Auth::user();
         $workFromHomeRequests = $user->check()->isAdmin() ?
-            WorkFromHome::with('employee')->get() :
+            WorkFromHome::with('employee')->filterBy(request()->all())->get() :
             $user->workFromHomeRequests;
 
         return response([

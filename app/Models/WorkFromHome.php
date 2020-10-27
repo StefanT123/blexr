@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Utilities\Filters\FilterBuilder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class WorkFromHome extends Model
 {
@@ -51,5 +52,20 @@ class WorkFromHome extends Model
     public function employee()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Scope a query to filter records.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array                                 $filters
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeFilterBy($query, array $filters)
+    {
+        $namespace = 'App\Utilities\Filters\WorkFromHomeFilters';
+        $filter = new FilterBuilder($query, $filters, $namespace);
+
+        return $filter->apply();
     }
 }

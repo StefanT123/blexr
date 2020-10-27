@@ -159,6 +159,58 @@ class AdminTest extends TestCase
     }
 
     /** @test */
+    public function admin_can_see_all_approved_work_from_home_requests()
+    {
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $requests = WorkFromHome::factory()
+            ->count(30)
+            ->create([
+                'approved' => $this->faker->randomElement([true, false, null]),
+                'user_id' => User::factory(),
+            ]);
+
+        $resp = $this->json('get', route('workFromHome.index', [
+            'status' => 'approved',
+        ]));
+
+        $requestsWithStatus = WorkFromHome::where('approved', true)->get();
+
+        $resp->assertOk();
+        $this->assertCount($requestsWithStatus->count(), $resp->json()['requests']);
+    }
+
+    /** @test */
+    public function admin_can_see_all_denied_work_from_home_requests()
+    {
+        $admin = User::factory()->create([
+            'role_id' => Role::factory()->create(['name' => 'admin']),
+        ]);
+
+        Passport::actingAs($admin);
+
+        $requests = WorkFromHome::factory()
+            ->count(30)
+            ->create([
+                'approved' => $this->faker->randomElement([true, false, null]),
+                'user_id' => User::factory(),
+            ]);
+
+        $resp = $this->json('get', route('workFromHome.index', [
+            'status' => 'denied',
+        ]));
+
+        $requestsWithStatus = WorkFromHome::where('approved', false)->get();
+
+        $resp->assertOk();
+        $this->assertCount($requestsWithStatus->count(), $resp->json()['requests']);
+    }
+
+    /** @test */
     public function admin_can_filter_work_from_home_requests_by_user()
     {
         $admin = User::factory()->create([
